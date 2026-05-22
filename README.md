@@ -1,37 +1,29 @@
+# Controle de Gastos Pessoais — Fintech Challenge
 
-## Requisitos
+MVP de controle financeiro pessoal com **Laravel 12**, **Vue.js 3**, **Tailwind CSS** e autenticação via **Laravel Sanctum**.
 
-- Docker version 29.3.0
-- Node v23.6.1
-- Npm 10.9.2
+## Funcionalidades
 
-## Instalação e passo a passo para rodar o projeto
+- Registro, login e logout com token Sanctum
+- CRUD de categorias de gasto (nome único por usuário)
+- CRUD de despesas com validações de negócio
+- Dashboard com total do mês, últimas 5 despesas e resumo por categoria
 
-Clone o repositório:
+## Pré-requisitos
+
+- Docker 29+
+- Node.js 23+
+- NPM 10+
+
+## Como rodar localmente (Docker)
 
 ```bash
 git clone https://github.com/rafPH1998/fintech-gastos-challenge.git
-```
-
-Entre na pasta do projeto:
-
-```bash
 cd fintech-gastos-challenge
-```
-
-Acesse o projeto:
-
-```bash
-code .
-```
-
-Crie o Arquivo .env:
-
-```bash
 cp .env.example .env
 ```
 
-Ajuste o **`.env`** OBS: (Por ser um projeto de teste, abaixo esta as credencias do env):
+Configure o `.env` para MySQL (Docker):
 
 ```env
 DB_CONNECTION=mysql
@@ -42,61 +34,81 @@ DB_USERNAME=root
 DB_PASSWORD=root
 ```
 
-Suba os containers do projeto:
+Suba os containers:
 
 ```bash
 docker compose up -d
 ```
 
-Caso gere um erro de permissao, é importante que o ID seja o mesmo que está definido no Dockerfile:
-
-![alt text](image.png)
-
-
-Acessar o container:
+Entre no container da aplicação:
 
 ```bash
 docker compose exec app bash
 ```
 
-Instale as dependências PHP:
+Dentro do container:
 
 ```bash
 composer install
-```
-
-Configure o ambiente:
-
-```bash
 php artisan key:generate
-```
-
-Rode as migrations com o seed de demonstração:
-
-```bash
 php artisan migrate:fresh --seed
 ```
 
-O seed cria usuário demo
-
-## Acessar projeto
+Na máquina host, instale dependências front e gere o build:
 
 ```bash
-http://localhost:8001/login
+npm install
+npm run build
 ```
 
-### Login de demonstração
+Para desenvolvimento com hot reload:
 
-| Campo   | Valor                 |
-|---------|-----------------------|
-| E-mail  | `user1@teste.local` |
-| Senha   | `senha123`            |
+```bash
+npm run dev
+```
 
+Acesse: [http://localhost:8001/login](http://localhost:8001/login)
 
-## Estrutura principal
+## Credenciais de teste (seed)
 
-- **Rotas:** `routes/web.php`
-- **Controllers:** `app/Http/Controllers/`
-- **Services (regras de negócio):** `app/Services/` — classes `*Service`
-- **Models:** `app/Models/`
-- **Views:** `resources/pages/`
+| Campo  | Valor                 |
+|--------|-----------------------|
+| E-mail | `user1@teste.local` |
+| Senha  | `senha123`            |
+
+## API (rotas principais)
+
+| Método | Rota | Descrição |
+|--------|------|-----------|
+| POST | `/api/registrar` | Cadastro |
+| POST | `/api/entrar` | Login |
+| POST | `/api/sair` | Logout (autenticado) |
+| GET | `/api/dashboard` | Resumo do mês |
+| CRUD | `/api/categorias` | Categorias |
+| CRUD | `/api/despesas` | Despesas |
+
+Envie o header `Authorization: Bearer {token}` nas rotas protegidas.
+
+## Testes automatizados
+
+```bash
+docker compose exec app php artisan test
+```
+
+Cobertura das regras de negócio:
+
+- Valor da despesa deve ser maior que zero
+- Data não pode ser futura em mais de 1 dia
+- Categoria deve pertencer ao usuário autenticado
+- Nome da categoria único por usuário
+
+## Estrutura do projeto
+
+- **Backend:** `app/Http/Controllers/`, `app/Http/Requests/`, `app/Models/`
+- **Frontend:** `resources/js/pages/`, `resources/js/servicos/api.js`
+- **Rotas API:** `routes/api.php`
+- **Rotas SPA:** `routes/web.php`
+
+## Deploy
+
+_(Em breve — será configurado na etapa final do desafio.)_
