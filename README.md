@@ -10,13 +10,13 @@
 Clone o repositório:
 
 ```bash
-git clone https://github.com/rafPH1998/
+git clone https://github.com/rafPH1998/fintech-gastos-challenge.git
 ```
 
 Entre na pasta do projeto:
 
 ```bash
-cd 
+cd fintech-gastos-challenge
 ```
 
 Acesse o projeto:
@@ -99,4 +99,4 @@ http://localhost:8001/login
 - **Controllers:** `app/Http/Controllers/`
 - **Services (regras de negócio):** `app/Services/` — classes `*Service`
 - **Models:** `app/Models/`
-- **Views:** `resources/views/`
+- **Views:** `resources/pages/`
