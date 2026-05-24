@@ -1,37 +1,64 @@
-import './bootstrap';
-import { createApp } from 'vue'
+import './bootstrap'
+import { createApp, ref } from 'vue'
 import { createRouter, createWebHistory } from 'vue-router'
 import App from './App.vue'
-import axios from 'axios'
+import api, { configurarTokenAutenticacao } from './servicos/api'
 
-// Configuração global do Axios
-axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest'
-axios.defaults.headers.common['X-CSRF-TOKEN'] = document.querySelector('meta[name="csrf-token"]')?.content
-axios.defaults.baseURL = '/'
+import Login from './pages/Login.vue'
+import Registro from './pages/Registro.vue'
+import Dashboard from './pages/Dashboard.vue'
+import Categorias from './pages/Categorias.vue'
+import Despesas from './pages/Despesas.vue'
 
-// Interceptor global de erros
-axios.interceptors.response.use(
-  response => response,
-  error => {
-    return Promise.reject(error)
-  }
+const usuarioLogado = ref(
+  localStorage.getItem('usuario_logado')
+    ? JSON.parse(localStorage.getItem('usuario_logado'))
+    : null
 )
 
-// Rotas
-import Teste from './pages/Teste.vue'
+const tokenSalvo = localStorage.getItem('token_acesso')
+if (tokenSalvo) {
+  configurarTokenAutenticacao(tokenSalvo)
+}
+
+const rotas = [
+  { path: '/', redirect: '/dashboard' },
+  { path: '/login', component: Login, meta: { convidado: true } },
+  { path: '/registro', component: Registro, meta: { convidado: true } },
+  { path: '/dashboard', component: Dashboard, meta: { requerAutenticacao: true } },
+  { path: '/categorias', component: Categorias, meta: { requerAutenticacao: true } },
+  { path: '/despesas', component: Despesas, meta: { requerAutenticacao: true } },
+]
 
 const router = createRouter({
   history: createWebHistory(),
-  routes: [
-    { path: '/', redirect: '/teste' },
-    { path: '/teste', component: Teste },
-  ],
+  routes: rotas,
+})
+
+router.beforeEach((para, de, proximo) => {
+  const estaAutenticado = !!localStorage.getItem('token_acesso')
+
+  if (para.meta.requerAutenticacao && !estaAutenticado) {
+    proximo('/login')
+    return
+  }
+
+  if (para.meta.convidado && estaAutenticado) {
+    proximo('/dashboard')
+    return
+  }
+
+  proximo()
 })
 
 const app = createApp(App)
+
+app.provide('usuarioLogado', usuarioLogado)
+
+app.config.globalProperties.$axios = api
+
 app.use(router)
 
-// Disponibilizar axios globalmente
-app.config.globalProperties.$axios = axios
-
 app.mount('#app')
+
+export { usuarioLogado, configurarTokenAutenticacao }
