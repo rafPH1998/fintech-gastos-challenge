@@ -43,7 +43,9 @@ php artisan key:generate
 php artisan migrate:fresh --seed
 ```
 
-Na máquina host, instale dependências front e suba aplicação:
+Saia do container para subir o front (digitando 'exit')
+
+Na máquina fora do container, instale dependências front e suba aplicação:
 
 ```bash
 npm install
@@ -73,7 +75,7 @@ Acesse: [http://localhost:8001/login](http://localhost:8001/login)
 ## Testes automatizados
 
 ```bash
-docker compose exec app php artisan test
+docker compose exec app php artisan test tests/Feature
 ```
 
 Cobertura das regras de negócio:
