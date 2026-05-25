@@ -23,17 +23,6 @@ cd fintech-gastos-challenge
 cp .env.example .env
 ```
 
-Configure o `.env` para MySQL (Docker):
-
-```env
-DB_CONNECTION=mysql
-DB_HOST=db
-DB_PORT=3306
-DB_DATABASE=fintech
-DB_USERNAME=root
-DB_PASSWORD=root
-```
-
 Suba os containers:
 
 ```bash
@@ -54,16 +43,10 @@ php artisan key:generate
 php artisan migrate:fresh --seed
 ```
 
-Na máquina host, instale dependências front e gere o build:
+Na máquina host, instale dependências front e suba aplicação:
 
 ```bash
 npm install
-npm run build
-```
-
-Para desenvolvimento com hot reload:
-
-```bash
 npm run dev
 ```
 
@@ -87,8 +70,6 @@ Acesse: [http://localhost:8001/login](http://localhost:8001/login)
 | CRUD | `/api/categorias` | Categorias |
 | CRUD | `/api/despesas` | Despesas |
 
-Envie o header `Authorization: Bearer {token}` nas rotas protegidas.
-
 ## Testes automatizados
 
 ```bash
@@ -109,6 +90,3 @@ Cobertura das regras de negócio:
 - **Rotas API:** `routes/api.php`
 - **Rotas SPA:** `routes/web.php`
 
-## Deploy
-
-_(Em breve — será configurado na etapa final do desafio.)_
